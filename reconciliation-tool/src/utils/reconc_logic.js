@@ -1,9 +1,6 @@
 export function reconcileData(internal, provider) {
-    console.log('=== RECONCILIATION DEBUG START ===');
-    console.log('Internal data length:', internal.length);
-    console.log('Provider data length:', provider.length);
-    console.log('Sample internal row:', internal[0]);
-    console.log('Sample provider row:', provider[0]);
+    console.log('Reconciliation input - Internal:', internal);
+    console.log('Reconciliation input - Provider:', provider);
     
     // Find the transaction reference field name
     const getTransactionRefField = (data) => {
@@ -28,55 +25,18 @@ export function reconcileData(internal, provider) {
     const internalRefField = getTransactionRefField(internal);
     const providerRefField = getTransactionRefField(provider);
     
-    // if (!internalRefField || !providerRefField) {
-    //   console.log('No transaction reference field found in either dataset');
-    //   return { matched: [], onlyInternal: internal, onlyProvider: provider };
-    // }
+    if (!internalRefField || !providerRefField) {
+      console.error('Could not find transaction reference field in one or both files');
+      return { matched: [], onlyInternal: internal, onlyProvider: provider };
+    }
     
-    // Clean and normalize the reference values
-    const cleanReference = (value) => {
-      if (value === null || value === undefined) return '';
-      return String(value).trim().toLowerCase();
-    };
-    
-    const internalMap = new Map();
-    const providerMap = new Map();
-    
-    // Build maps with cleaned references
-    internal.forEach((row, index) => {
-      const ref = cleanReference(row[internalRefField]);
-      if (ref) {
-        internalMap.set(ref, row);
-        if (index < 3) console.log(`Internal ref ${index}: "${ref}" (original: "${row[internalRefField]}")`);
-      }
-    });
-    
-    provider.forEach((row, index) => {
-      const ref = cleanReference(row[providerRefField]);
-      if (ref) {
-        providerMap.set(ref, row);
-        if (index < 3) console.log(`Provider ref ${index}: "${ref}" (original: "${row[providerRefField]}")`);
-      }
-    });
+    const internalMap = new Map(internal.map(row => [row[internalRefField], row]));
+    const providerMap = new Map(provider.map(row => [row[providerRefField], row]));
     
     console.log('Internal Map size:', internalMap.size);
     console.log('Provider Map size:', providerMap.size);
     console.log('Sample internal keys:', Array.from(internalMap.keys()).slice(0, 5));
     console.log('Sample provider keys:', Array.from(providerMap.keys()).slice(0, 5));
-    
-    // Check for potential matches
-    const internalKeys = Array.from(internalMap.keys());
-    const providerKeys = Array.from(providerMap.keys());
-    
-    console.log('Checking for potential matches...');
-    let potentialMatches = 0;
-    internalKeys.forEach(key => {
-      if (providerKeys.includes(key)) {
-        console.log('Potential match found:', key);
-        potentialMatches++;
-      }
-    });
-    console.log('Total potential matches:', potentialMatches);
   
     const matched = [];
     const onlyInternal = [];
@@ -85,7 +45,6 @@ export function reconcileData(internal, provider) {
     internalMap.forEach((intVal, ref) => {
       if (providerMap.has(ref)) {
         const provVal = providerMap.get(ref);
-        console.log('Match found for reference:', ref);
         matched.push({ ...intVal, matchedWith: provVal });
         providerMap.delete(ref);
       } else {
@@ -95,11 +54,12 @@ export function reconcileData(internal, provider) {
   
     providerMap.forEach(provVal => onlyProvider.push(provVal));
     
-    console.log('=== RECONCILIATION RESULTS ===');
+    console.log('Reconciliation results:');
     console.log('- Matched:', matched.length);
     console.log('- Only Internal:', onlyInternal.length);
     console.log('- Only Provider:', onlyProvider.length);
-    console.log('=== RECONCILIATION DEBUG END ===');
+    console.log('- Only Internal data:', onlyInternal);
+    console.log('- Only Provider data:', onlyProvider);
   
     return { matched, onlyInternal, onlyProvider };
   }
