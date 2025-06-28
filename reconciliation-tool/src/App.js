@@ -72,7 +72,7 @@ function App() {
               </svg>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#ffffff', margin: 0 }}>Internal System Export</h3>
             </div>
-            <FileUploader onUpload={handleInternalUpload} />
+        <FileUploader onUpload={handleInternalUpload} />
             {internalData.length > 0 && (
               <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', width: '100%' }}>
                 <p style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: 500, margin: 0 }}>
@@ -111,8 +111,8 @@ function App() {
                 <path d="M9 12h6M9 16h6" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" />
               </svg>
               <h3 style={{ fontSize: '1.25rem', fontWeight: 600, color: '#ffffff', margin: 0 }}>Provider Statement</h3>
-            </div>
-            <FileUploader onUpload={handleProviderUpload} />
+      </div>
+        <FileUploader onUpload={handleProviderUpload} />
             {providerData.length > 0 && (
               <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', width: '100%' }}>
                 <p style={{ color: '#ffffff', fontSize: '0.95rem', fontWeight: 500, margin: 0 }}>
